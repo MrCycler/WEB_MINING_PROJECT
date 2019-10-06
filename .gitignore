@@ -19,3 +19,7 @@ ipython_config.py
 
 *.ini
 *.pyc 
+*.txt
+*.csv
+*.model
+*.npy
