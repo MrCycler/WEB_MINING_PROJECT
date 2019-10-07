@@ -25,6 +25,7 @@ def limpiar_parrafo(contenido):
 def eliminar_stopwords(cadena, stopwords):
   if not(isinstance(cadena, float)):
     text = ' '.join([word for word in cadena.split() if word not in stopwords])
+    text = text.replace('xa0',' ')
   else:
     text = np.NaN
   return text
@@ -32,11 +33,11 @@ def eliminar_stopwords(cadena, stopwords):
 def limpiar_dataframe(df_art, stopwords):
   size = df_art.shape
   for i in range(size[0]):
-    df_art.at[i, 'Contenido'] = eliminar_stopwords(limpiar_parrafo(df_art['Contenido'][i]),stopwords).replace('xa0',' ')
-    df_art.at[i, 'Categoria'] = eliminar_stopwords(limpiar_parrafo(df_art['Categoria'][i]),stopwords).replace('xa0',' ')
-    df_art.at[i, 'Autor'] = eliminar_stopwords(limpiar_parrafo(df_art['Autor'][i]),stopwords).replace('xa0',' ')
-    df_art.at[i, 'Titulo'] = eliminar_stopwords(limpiar_parrafo(df_art['Titulo'][i]),stopwords).replace('xa0',' ')
-    df_art.at[i, 'Resumen'] = eliminar_stopwords(limpiar_parrafo(df_art['Resumen'][i]),stopwords).replace('xa0',' ')
+    df_art.at[i, 'Contenido'] = eliminar_stopwords(limpiar_parrafo(df_art['Contenido'][i]),stopwords)
+    df_art.at[i, 'Categoria'] = eliminar_stopwords(limpiar_parrafo(df_art['Categoria'][i]),stopwords)
+    df_art.at[i, 'Autor'] = eliminar_stopwords(limpiar_parrafo(df_art['Autor'][i]),stopwords)
+    df_art.at[i, 'Titulo'] = eliminar_stopwords(limpiar_parrafo(df_art['Titulo'][i]),stopwords)
+    df_art.at[i, 'Resumen'] = eliminar_stopwords(limpiar_parrafo(df_art['Resumen'][i]),stopwords)
   return df_art
 
 def print_news(array_news):
@@ -51,15 +52,16 @@ def print_news(array_news):
         print('*Fecha:',f[5])
 
 def limpiar_csv(file_name,out_name):
-    nltk.download('stopwords')
-    df_articulos = pd.read_csv(file_name)
-    StopWords = stopwords.words("spanish")
-    columns = ['palabras']
-    df2 = pd.read_csv('spanish_stopwords.csv', encoding = "ISO-8859-1",names=columns)
-    stopwords_added = df2['palabras'].values.tolist()
-    stopwords_castellano = StopWords + stopwords_added
-    df_articulos_clean = limpiar_dataframe(df_articulos, stopwords_castellano)
-    df_articulos_clean.to_csv(out_name,encoding='utf_8')
-    #print('------------------------------------------------------------------------------------------------------------')
-    #print('Noticias obtenidas despues de la limpieza:')
-    #print_news(df_articulos_clean)
+  nltk.download('stopwords')
+  df_articulos = pd.read_csv(file_name)
+  df_articulos.drop(df_articulos.columns[0],axis=1,inplace=True)
+  StopWords = stopwords.words("spanish")
+  columns = ['palabras']
+  df2 = pd.read_csv('spanish_stopwords.csv', encoding = "ISO-8859-1",names=columns)
+  stopwords_added = df2['palabras'].values.tolist()
+  stopwords_castellano = StopWords + stopwords_added
+  df_articulos_clean = limpiar_dataframe(df_articulos, stopwords_castellano)
+  df_articulos_clean.to_csv(out_name,encoding='utf_8')
+  #print('------------------------------------------------------------------------------------------------------------')
+  #print('Noticias obtenidas despues de la limpieza:')
+  #print_news(df_articulos_clean)
